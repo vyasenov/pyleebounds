@@ -113,7 +113,7 @@ window.Quarto = {
 
 <section id="pyleebounds" class="level1">
 <h1>pyleebounds</h1>
-<p>A Python package for estimating treatment effect bounds under sample selection following the method of <strong>Lee (2009)</strong>: <em>“Training, Wages, and Sample Selection: Estimating Sharp Bounds on Treatment Effects.”</em> This approach provides nonparametric bounds on treatment effects when selection into the post-treatment sample is endogenous and differs across groups.</p>
+<p>A Python package for estimating treatment effect bounds under sample selection, based on the method of Lee (2009). This approach is especially useful when selection into the observed sample (e.g., post-treatment employment) differs by treatment status and may introduce bias in outcome comparisons.</p>
 <section id="installation" class="level2">
 <h2 class="anchored" data-anchor-id="installation">Installation</h2>
 <p>You can install the package using pip:</p>
@@ -122,118 +122,121 @@ window.Quarto = {
 <section id="features" class="level2">
 <h2 class="anchored" data-anchor-id="features">Features</h2>
 <ul>
-<li><strong>Sharp treatment effect bounds</strong> under endogenous selection</li>
-<li><strong>Handles non-random attrition or sample truncation</strong> (e.g.&nbsp;post-treatment employment)</li>
-<li><strong>Automatic trimming</strong> of treated group to match selection rates</li>
-<li><strong>Flexible interface</strong> for specifying outcomes, treatment, and selection variables</li>
-<li><strong>Bootstrap support</strong> for confidence intervals</li>
-<li><strong>Visualization</strong> of upper/lower bounds and trimmed distributions</li>
+<li>Sharp nonparametric bounds on treatment effects under endogenous sample selection</li>
+<li>Automatically handles non-random attrition or truncation (e.g.&nbsp;only observing outcomes for employed individuals)</li>
+<li>Bootstrap confidence intervals</li>
+<li>Seamless integration with Pandas</li>
 </ul>
 </section>
 <section id="quick-start" class="level2">
 <h2 class="anchored" data-anchor-id="quick-start">Quick Start</h2>
 <div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pyleebounds <span class="im">import</span> LeeBounds</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Load or simulate data</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.read_csv(<span class="st">"your_data.csv"</span>)</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Columns:</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co"># 'Y' = outcome variable</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 'D' = treatment indicator (1 = treated, 0 = control)</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co"># 'S' = selection indicator (1 = observed, 0 = missing/selected out)</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pyleebounds <span class="im">import</span> LeeBounds</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate synthetic data</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">1988</span>)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="dv">1000</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Treatment assignment (random)</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>D <span class="op">=</span> np.random.binomial(<span class="dv">1</span>, <span class="fl">0.5</span>, n)</span>
 <span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialize and fit Lee bounds estimator</span></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>lb <span class="op">=</span> LeeBounds()</span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>results <span class="op">=</span> lb.fit(df, outcome<span class="op">=</span><span class="st">'Y'</span>, treatment<span class="op">=</span><span class="st">'D'</span>, selection<span class="op">=</span><span class="st">'S'</span>)</span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="co"># View summary</span></span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(results.summary())</span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot estimated bounds</span></span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>results.plot()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Potential outcomes (e.g., wages)</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>Y0 <span class="op">=</span> np.random.normal(<span class="dv">50</span>, <span class="dv">10</span>, n)  <span class="co"># Control potential outcome</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>treatment_effect <span class="op">=</span> np.random.normal(<span class="dv">5</span>, <span class="dv">3</span>, n)  <span class="co"># Treatment effect</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>Y1 <span class="op">=</span> Y0 <span class="op">+</span> treatment_effect  <span class="co"># Treated potential outcome</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>Y <span class="op">=</span> D <span class="op">*</span> Y1 <span class="op">+</span> (<span class="dv">1</span> <span class="op">-</span> D) <span class="op">*</span> Y0  <span class="co"># Actual outcome</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Selection mechanism (e.g., employment)</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Higher wages and treatment increase employment probability</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>employment_prob <span class="op">=</span> <span class="fl">0.3</span> <span class="op">+</span> <span class="fl">0.4</span> <span class="op">*</span> (Y <span class="op">&gt;</span> <span class="dv">50</span>) <span class="op">+</span> <span class="fl">0.2</span> <span class="op">*</span> D</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>employment_prob <span class="op">=</span> np.clip(employment_prob, <span class="dv">0</span>, <span class="dv">1</span>)</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>S <span class="op">=</span> np.random.binomial(<span class="dv">1</span>, employment_prob, n)</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Create DataFrame</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Y'</span>: Y,  <span class="co"># outcome variable</span></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>    <span class="st">'D'</span>: D,  <span class="co"># treatment indicator (1 = treated, 0 = control)</span></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>    <span class="st">'S'</span>: S   <span class="co"># selection indicator (1 = observed, 0 = missing/selected out)</span></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialize and fit Lee bounds estimator</span></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>lb <span class="op">=</span> LeeBounds()</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>results <span class="op">=</span> lb.fit(df, outcome<span class="op">=</span><span class="st">'Y'</span>, treatment<span class="op">=</span><span class="st">'D'</span>, selection<span class="op">=</span><span class="st">'S'</span>)</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a><span class="co"># View summary</span></span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(results.summary())</span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot estimated bounds</span></span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>results.plot()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="examples" class="level2">
 <h2 class="anchored" data-anchor-id="examples">Examples</h2>
-<p>See the <code>examples/</code> directory for worked examples on:</p>
-<ul>
-<li>Job training and post-employment wages</li>
-<li>Randomized control trials with non-random attrition</li>
-<li>Visualization of trimmed distributions</li>
-<li>Bootstrap confidence intervals for bounds</li>
-</ul>
+<p>You can find detailed usage examples in the <code>examples/</code> directory.</p>
 </section>
 <section id="background" class="level2">
 <h2 class="anchored" data-anchor-id="background">Background</h2>
-<section id="selection-bias-in-post-treatment-outcomes" class="level3">
-<h3 class="anchored" data-anchor-id="selection-bias-in-post-treatment-outcomes">Selection Bias in Post-Treatment Outcomes</h3>
-<p>In many studies, outcomes are only observed for a selected subgroup—e.g.&nbsp;only employed individuals report wages, or only survivors report health status. When the probability of being observed depends on the treatment, comparing outcomes across groups can lead to <strong>selection bias</strong>.</p>
-<p>For example:</p>
-<ul>
-<li>A job training program increases employment. But if we only observe wages for employed individuals, the post-treatment wage comparison may <strong>overstate or understate</strong> the true effect of training.</li>
-</ul>
-</section>
-<section id="lee-bounds-bounding-the-true-effect" class="level3">
-<h3 class="anchored" data-anchor-id="lee-bounds-bounding-the-true-effect">Lee Bounds: Bounding the True Effect</h3>
-<p>Lee (2009) proposed a sharp bounding procedure that adjusts for <strong>differential selection rates</strong> across treatment and control groups. The key idea is:</p>
-<ul>
-<li>Assume that potential outcomes and selection are <strong>monotonic in unobservables</strong> (i.e., individuals more likely to be selected are also more likely to have high outcomes).</li>
-<li>Trim the treatment group’s outcome distribution to match the control group’s selection rate.</li>
-<li>Compute <strong>bounds</strong> on the treatment effect using the extremes of possible selection bias.</li>
-</ul>
+<section id="why-treatment-bounds" class="level3">
+<h3 class="anchored" data-anchor-id="why-treatment-bounds">Why Treatment Bounds?</h3>
+<p>In many applied settings, outcomes are observed only for a selected subset of the population—e.g., wages are observed only for employed individuals. If treatment affects selection (e.g., job training increases employment), naïvely comparing outcomes may confound treatment effects with selection effects.</p>
+<p>Lee (2009) offers a way to partially identify treatment effects by trimming the treated group’s distribution to match the control group’s selection rate under plausible assumptions.</p>
 <hr>
 </section>
-<section id="notation-and-key-equations" class="level3">
-<h3 class="anchored" data-anchor-id="notation-and-key-equations">Notation and Key Equations</h3>
-<p>Let:</p>
+<section id="notation" class="level3">
+<h3 class="anchored" data-anchor-id="notation">Notation</h3>
+<p>Let’s establish the following notation:</p>
 <ul>
-<li><span class="math inline">\(Y\)</span> be the outcome (e.g.&nbsp;wages)</li>
-<li><span class="math inline">\(D \in \{0,1\}\)</span> indicate treatment status</li>
-<li><span class="math inline">\(S \in \{0,1\}\)</span> indicate selection (1 = observed, 0 = missing)</li>
+<li><span class="math inline">\(Y\)</span>: observed <em>continuous</em> outcome</li>
+<li><span class="math inline">\(D \in \{0,1\}\)</span>: treatment indicator (1 = treated)</li>
+<li><span class="math inline">\(S \in \{0,1\}\)</span>: selection indicator (1 = observed)</li>
+<li><span class="math inline">\(Y(0), Y(1)\)</span>: potential outcomes under control/treatment</li>
+<li><span class="math inline">\(S(0), S(1)\)</span>: potential selection statuses</li>
+<li><span class="math inline">\(p_1 = \Pr(S=1 \mid D=1)\)</span>, <span class="math inline">\(p_0 = \Pr(S=1 \mid D=0)\)</span>: selection rates</li>
 </ul>
-<p>Let:</p>
-<ul>
-<li><span class="math inline">\(p_1 = \mathbb{P}(S=1 \mid D=1)\)</span>: selection rate in the treated group</li>
-<li><span class="math inline">\(p_0 = \mathbb{P}(S=1 \mid D=0)\)</span>: selection rate in the control group</li>
-<li>Assume <span class="math inline">\(p_1 &gt; p_0\)</span> (treated more likely to be selected)</li>
-</ul>
-<p>To <strong>equalize selection</strong>, Lee (2009) proposes trimming the upper <span class="math inline">\(p_1 - p_0\)</span> quantile of the treated group’s outcome distribution among those with <span class="math inline">\(S=1\)</span>, assuming <strong>monotonicity</strong>.</p>
-<p>The <strong>Lee bounds</strong> on the average treatment effect on the observed subpopulation are:</p>
-<p><span class="math display">\[
-\underline{\Delta} = \mathbb{E}[Y \mid D=1, S=1]_{\text{lower trimmed}} - \mathbb{E}[Y \mid D=0, S=1]
-\]</span></p>
-<p><span class="math display">\[
-\overline{\Delta} = \mathbb{E}[Y \mid D=1, S=1]_{\text{upper trimmed}} - \mathbb{E}[Y \mid D=0, S=1]
-\]</span></p>
-<p>These represent <strong>worst-case lower and upper bounds</strong> on the average treatment effect, given the selection bias due to <span class="math inline">\(p_1 \ne p_0\)</span>.</p>
+<p>For each unit we observe <span class="math inline">\(\left(D, S, Y\times S \right)\)</span>.</p>
 <hr>
 </section>
 <section id="assumptions" class="level3">
 <h3 class="anchored" data-anchor-id="assumptions">Assumptions</h3>
 <ol type="1">
-<li><strong>Monotonicity in unobservables</strong>: The unobserved factors that increase selection also increase the outcome.</li>
-<li><strong>Exogenous treatment</strong>: Treatment is randomly assigned or unconfounded.</li>
-<li><strong>No support violations</strong>: The trimmed portion of the treated distribution still overlaps with the control distribution.</li>
+<li>Monotonicity: Treatment weakly increases the probability of being observed <span class="math display">\[S(1)\geq S(0).\]</span></li>
+<li>Exogeneity: Treatment is randomly assigned or unconfounded <span class="math display">\[\left(Y(0),Y(1),S(0),S(1)\right) \perp D.\]</span></li>
 </ol>
 <hr>
 </section>
-<section id="confidence-intervals-via-bootstrap" class="level3">
-<h3 class="anchored" data-anchor-id="confidence-intervals-via-bootstrap">Confidence Intervals via Bootstrap</h3>
-<p>Since the Lee bounds involve non-differentiable operations (quantile trimming), standard variance formulas are not available. Instead, <strong>bootstrap confidence intervals</strong> are recommended:</p>
+<section id="main-result" class="level3">
+<h3 class="anchored" data-anchor-id="main-result">Main Result</h3>
+<p>To adjust for differential selection, Lee (2009) suggested trimming the treated group’s outcome distribution among those with <span class="math inline">\(S=1\)</span>. We then compute bounds on the average treatment effect (ATE) for the observed sample as:</p>
+<p><span class="math display">\[
+ATE \in \left[ \underline{\Delta}, \overline{\Delta} \right],
+\]</span></p>
+<p>where:</p>
+<p><span class="math display">\[
+\underline{\Delta} = \mathbb{E}[Y \mid Y\geq q^{1-\frac{p_0}{p_1}}, D=1, S=1] - \mathbb{E}[Y \mid D=0, S=1]
+\]</span></p>
+<p><span class="math display">\[
+\overline{\Delta} = \mathbb{E}[Y \mid Y\leq q^{\frac{p_0}{p_1}}, D=1, S=1] - \mathbb{E}[Y \mid D=0, S=1]
+\]</span></p>
+<p>Here <span class="math inline">\(q^{u}\)</span> represents the <span class="math inline">\(u\)</span>th quantile of <span class="math inline">\(Y|D=1,S=1\)</span>. These form sharp bounds under the stated assumptions.</p>
+<p>These bounds can be tightened in presence of additional covariates <span class="math inline">\(X\)</span>, but this package does not offer that functionality. See also Semenova (2020).</p>
+<hr>
+</section>
+<section id="confidence-intervals" class="level3">
+<h3 class="anchored" data-anchor-id="confidence-intervals">Confidence Intervals</h3>
+<p>Since the Lee bounds involve non-differentiable operations (quantile trimming), variance formulas are complex. Instead, this package provides bootstrap confidence intervals computed as follows:</p>
 <ol type="1">
 <li>Resample units with replacement, stratified by treatment group.</li>
 <li>Compute Lee bounds for each bootstrap sample.</li>
-<li>Construct percentile or bias-corrected intervals using the empirical bootstrap distribution.</li>
+<li>Construct percentile intervals using the empirical bootstrap distribution.</li>
 </ol>
-<p>The package includes built-in support for:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>results.bootstrap(n_bootstrap<span class="op">=</span><span class="dv">500</span>, ci_level<span class="op">=</span><span class="fl">0.95</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<hr>
 </section>
 </section>
 <section id="references" class="level2">
 <h2 class="anchored" data-anchor-id="references">References</h2>
 <ul>
 <li>Lee, D. S. (2009). <em>Training, wages, and sample selection: Estimating sharp bounds on treatment effects</em>. <em>The Review of Economic Studies</em>, 76(3), 1071–1102.</li>
+<li>Semenova, V. (2020). Generalized lee bounds. arXiv preprint arXiv:2008.12720.</li>
+<li>Tauchmann, H. (2014). Lee (2009) treatment-effect bounds for nonrandom sample selection. The Stata Journal, 14(4), 884-894.</li>
 </ul>
 </section>
 <section id="license" class="level2">
@@ -243,13 +246,13 @@ window.Quarto = {
 <section id="citation" class="level2">
 <h2 class="anchored" data-anchor-id="citation">Citation</h2>
 <p>To cite this package in publications, use the following BibTeX entry:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode bibtex code-with-copy"><code class="sourceCode bibtex"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="va">@misc</span>{<span class="ot">yasenov2025pyleebounds</span>,</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">author</span>       = {Vasco Yasenov},</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">title</span>        = {pyleebounds: Python Tools for Estimating Treatment Effect Bounds under Sample Selection},</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">year</span>         = {2025},</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">howpublished</span> = {<span class="ch">\url</span>{https://github.com/vyasenov/pyleebounds}},</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">note</span>         = {Version 0.1.0}</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bibtex code-with-copy"><code class="sourceCode bibtex"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="va">@misc</span>{<span class="ot">yasenov2025pyleebounds</span>,</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">author</span>       = {Vasco Yasenov},</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">title</span>        = {pyleebounds: Python Tools for Estimating Treatment Effect Bounds under Sample Selection},</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">year</span>         = {2025},</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">howpublished</span> = {<span class="ch">\url</span>{https://github.com/vyasenov/pyleebounds}},</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">note</span>         = {Version 0.1.0}</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 </section>
 
