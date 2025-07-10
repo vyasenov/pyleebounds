@@ -5,6 +5,29 @@ Setup script for pyleebounds package.
 from setuptools import setup, find_packages
 import os
 
+def read_readme():
+    """Read README.md file."""
+    try:
+        with open("README.md", "r", encoding="utf-8") as fh:
+            return fh.read()
+    except FileNotFoundError:
+        return "Python package for Lee 2009 treatment effect bounds under sample selection"
+
+def read_requirements():
+    """Read requirements.txt file."""
+    try:
+        with open("requirements.txt", "r", encoding="utf-8") as fh:
+            return [line.strip() for line in fh if line.strip() and not line.startswith("#")]
+    except FileNotFoundError:
+        # Default requirements if file not found
+        return [
+            "numpy>=1.20.0",
+            "pandas>=1.3.0", 
+            "matplotlib>=3.3.0",
+            "seaborn>=0.11.0",
+            "scipy>=1.7.0"
+        ]
+
 setup(
     name="pyleebounds",
     version="0.1.0",
