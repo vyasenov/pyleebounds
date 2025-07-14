@@ -1,5 +1,6 @@
-
 # pyleebounds
+
+![](https://img.shields.io/badge/license-MIT-green)
 
 A Python package for estimating treatment effect bounds under sample selection, based on the method of Lee (2009). This approach is especially useful when selection into the observed sample (e.g., post-treatment employment) differs by treatment status and may introduce bias in outcome comparisons.
 
