@@ -17,7 +17,7 @@ pip install pyleebounds
 * Sharp nonparametric bounds on treatment effects under endogenous sample selection
 * Automatically handles non-random attrition or truncation (e.g. only observing outcomes for employed individuals)
 * Bootstrap confidence intervals
-* Seamless integration with Pandas
+* Seamless integration with `pandas`
 
 ## Quick Start
 
@@ -53,19 +53,18 @@ df = pd.DataFrame({
 })
 
 # Initialize and fit Lee bounds estimator
-lb = LeeBounds()
+# Use fewer bootstrap replications for faster execution in this example
+lb = LeeBounds(n_bootstrap=20, ci_level=0.95)
 results = lb.fit(df, outcome='Y', treatment='D', selection='S')
 
-# View summary
-print(results.summary())
-
-# Plot estimated bounds
-results.plot()
+# View comprehensive summary
+print(lb.summary())
 ```
+
 
 ## Examples
 
-You can find detailed usage examples in the  `examples/` directory.
+You can find detailed usage examples in the `examples/` directory.
 
 ## Background
 

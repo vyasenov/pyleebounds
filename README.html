@@ -126,7 +126,7 @@ window.Quarto = {
 <li>Sharp nonparametric bounds on treatment effects under endogenous sample selection</li>
 <li>Automatically handles non-random attrition or truncation (e.g.&nbsp;only observing outcomes for employed individuals)</li>
 <li>Bootstrap confidence intervals</li>
-<li>Seamless integration with Pandas</li>
+<li>Seamless integration with <code>pandas</code></li>
 </ul>
 </section>
 <section id="quick-start" class="level2">
@@ -162,14 +162,16 @@ window.Quarto = {
 <span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>})</span>
 <span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialize and fit Lee bounds estimator</span></span>
-<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>lb <span class="op">=</span> LeeBounds()</span>
-<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>results <span class="op">=</span> lb.fit(df, outcome<span class="op">=</span><span class="st">'Y'</span>, treatment<span class="op">=</span><span class="st">'D'</span>, selection<span class="op">=</span><span class="st">'S'</span>)</span>
-<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a><span class="co"># View summary</span></span>
-<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(results.summary())</span>
-<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot estimated bounds</span></span>
-<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>results.plot()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a><span class="co"># Use fewer bootstrap replications for faster execution in this example</span></span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>lb <span class="op">=</span> LeeBounds(n_bootstrap<span class="op">=</span><span class="dv">20</span>, ci_level<span class="op">=</span><span class="fl">0.95</span>)</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>results <span class="op">=</span> lb.fit(df, outcome<span class="op">=</span><span class="st">'Y'</span>, treatment<span class="op">=</span><span class="st">'D'</span>, selection<span class="op">=</span><span class="st">'S'</span>)</span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a><span class="co"># View comprehensive summary</span></span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(lb.summary())</span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a><span class="co"># Access individual results</span></span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Treatment effect bounds: [</span><span class="sc">{</span>results<span class="sc">.</span>lower_bound<span class="sc">:.3f}</span><span class="ss">, </span><span class="sc">{</span>results<span class="sc">.</span>upper_bound<span class="sc">:.3f}</span><span class="ss">]"</span>)</span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Selection rates - Treated: </span><span class="sc">{</span>results<span class="sc">.</span>p1<span class="sc">:.3f}</span><span class="ss">, Control: </span><span class="sc">{</span>results<span class="sc">.</span>p0<span class="sc">:.3f}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="examples" class="level2">
 <h2 class="anchored" data-anchor-id="examples">Examples</h2>

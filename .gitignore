@@ -5,6 +5,7 @@ __pycache__/
 
 # C extensions
 *.so
+.DS_Store
 
 # Distribution / packaging
 .Python
@@ -13,6 +14,7 @@ develop-eggs/
 dist/
 downloads/
 README_files/
+README_files/*
 papers/
 eggs/
 .eggs/

@@ -30,7 +30,7 @@ def read_requirements():
 
 setup(
     name="pyleebounds",
-    version="0.1.0",
+    version="0.2.0",
     author="Vasco Yasenov",
     author_email="",
     description="Python package for Lee 2009 treatment effect bounds under sample selection",
